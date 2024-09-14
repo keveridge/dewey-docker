@@ -1,0 +1,37 @@
+name: activepieces
+services:
+  activepieces:
+    container_name: activepieces-webserver
+    image: activepieces/activepieces:latest
+#    ports:
+#      - "8080:80"
+    environment:
+      - AP_FRONTEND_URL=${AP_FRONTEND_URL}
+      - AP_POSTGRES_URL=${AP_POSTGRES_URL}
+      - AP_ENCRYPTION_KEY=${AP_ENCRYPTION_KEY}
+      - AP_JWT_SECRET=${AP_JWT_SECRET}
+      - AP_ENVIRONMENT=${AP_ENVIRONMENT}
+      - AP_OPENAI_API_KEY=${AP_OPENAI_API_KEY}
+      - AP_REDIS_URL=${AP_REDIS_URL}
+    volumes:
+      - ./data/activepieces/webserver/volumes/data:/root/.activepieces
+    networks:
+      - activepieces
+      - postgres
+
+  redis:
+    container_name: activepieces-redis
+    image: redis:7
+    #ports:
+    #  - "6379:6379"
+    volumes:
+      - ./data/activepieces/redis/volumes/data:/data
+    networks:
+      - activepieces
+
+networks:
+  activepieces:
+    name: activepieces
+    driver: bridge
+  postgres:
+    external: true

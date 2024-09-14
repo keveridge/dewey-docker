@@ -1,0 +1,16 @@
+name: sftp-server
+services:
+  sftp-server:
+    image: atmoz/sftp
+    container_name: sftp-server
+    ports:
+      - "22:22"
+    volumes:
+      - ./data/paperless/webserver/volumes/consume:/home/scanner/upload
+      - ./data/sftp/config/ssh_keys/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - ./data/sftp/config/ssh_keys/ssh_host_ed25519_key.pub:/etc/ssh/ssh_host_ed25519_key.pub
+      - ./data/sftp/config/ssh_keys/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+      - ./data/sftp/config/ssh_keys/ssh_host_rsa_key.pub:/etc/ssh/ssh_host_rsa_key.pub
+    environment:
+      - SFTP_USERS=${SFTP_USERS}
+    restart: unless-stopped

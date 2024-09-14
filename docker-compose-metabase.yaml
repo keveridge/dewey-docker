@@ -1,0 +1,26 @@
+name: metabase
+services:
+  metabase:
+    image: metabase/metabase:latest
+    container_name: ${METABASE_CONTAINER_NAME}
+    ports:
+      - "${METABASE_PORT_EXTERNAL}:${METABASE_PORT_INTERNAL}"
+    environment:
+      - MB_DB_TYPE=${MB_DB_TYPE}
+      - MB_DB_DBNAME=${MB_DB_DBNAME}
+      - MB_DB_PORT=${MB_DB_PORT}
+      - MB_DB_USER=${MB_DB_USER}
+      - MB_DB_PASS=${MB_DB_PASS}
+      - MB_DB_HOST=${MB_DB_HOST}
+    volumes:
+      - ./data/metabase/volumes/data:/metabase-data
+    networks:
+      - metabase
+      - postgres
+
+networks:
+  metabase:
+    name: metabase
+    driver: bridge
+  postgres:
+    external: true

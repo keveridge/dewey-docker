@@ -1,0 +1,25 @@
+name: n8n
+services:
+  n8n:
+    image: n8nio/n8n:1.57.0
+    # Internal port is 5678
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - N8N_SECURE_COOKIE=${N8N_SECURE_COOKIE}
+    volumes:
+      - ./data/n8n/volumes/data:/home/node/.n8n
+    restart: unless-stopped
+    networks:
+      - n8n
+      - postgres
+
+networks:
+  n8n:
+    name: n8n
+    driver: bridge
+  postgres:
+    external: true

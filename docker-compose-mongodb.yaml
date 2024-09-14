@@ -1,0 +1,22 @@
+name: mongodb
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: ${MONGO_CONTAINER_NAME}
+    ports:
+      - "${MONGO_PORT_EXTERNAL}:${MONGO_PORT_INTERNAL}"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGOSH_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_USERNAME}@${MONGO_CONTAINER_NAME}:${MONGO_PORT_INTERNAL}/${MONGO_AUTH_DB}
+    volumes:
+      - ./data/mongodb/config/init:/docker-entrypoint-initdb.d
+      - ./data/mongodb/volumes/data:/data/db
+      - ./data/mongodb/volumes/export:/export
+    networks:
+      - mongodb
+
+networks:
+  mongodb:
+    name: mongodb
+    driver: bridge

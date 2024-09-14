@@ -1,0 +1,25 @@
+name: langfuse
+
+services:
+  langfuse:
+    image: langfuse/langfuse:2.68.0
+    container_name: langfuse
+    platform: linux/amd64
+    #ports:
+    #  - "${LANGFUSE_PORT_EXTERNAL}:${LANGFUSE_PORT_INTERNAL}"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_CONTAINER_NAME}:${POSTGRES_PORT_INTERNAL}/${LANGFUSE_DATABASE}
+      - NEXTAUTH_SECRET=${LANGFUSE_NEXTAUTH_SECRET}
+      - SALT=${LANGFUSE_SALT}
+      - NEXTAUTH_URL=${LANGFUSE_NEXTAUTH_URL}
+      - TELEMETRY_ENABLED=${LANGFUSE_TELEMETRY_ENABLED}
+    networks:
+      - langfuse
+      - postgres
+
+networks:
+  langfuse:
+    name: langfuse
+    driver: bridge
+  postgres:
+    external: true

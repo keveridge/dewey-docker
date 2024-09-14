@@ -1,0 +1,34 @@
+name: postgres
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    ports:
+      - ${POSTGRES_PORT_EXTERNAL}:${POSTGRES_PORT_INTERNAL}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - PGHOST=${POSTGRES_CONTAINER_NAME}
+      - PGPORT=${POSTGRES_PORT_INTERNAL}
+      - PGUSER=${POSTGRES_USER}
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+      - PGDATABASE=${POSTGRES_DB}
+    volumes:
+      - ./data/postgres/config/init:/docker-entrypoint-initdb.d
+      - ./data/postgres/volumes/data:/var/lib/postgresql/data
+      - ./data/postgres/volumes/export:/export
+      - ./data/postgres/config/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    name: postgres
+    driver: bridge

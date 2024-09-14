@@ -1,0 +1,30 @@
+name: oauth2proxy
+services:
+  oauth2proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    container_name: oauth2proxy
+    command:
+      - --config=/etc/oauth2-proxy/oauth2-proxy.cfg
+    volumes:
+      - ./data/oauth2proxy/config/oauth2-proxy.cfg:/etc/oauth2-proxy/oauth2-proxy.cfg:ro
+      - ./data/oauth2proxy/config/authenticated-emails.txt:/etc/oauth2-proxy/authenticated-emails.txt:ro
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=${OAUTH2_PROXY_CLIENT_ID}
+      - OAUTH2_PROXY_CLIENT_SECRET=${OAUTH2_PROXY_CLIENT_SECRET}
+      - OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET}
+      - OAUTH2_PROXY_REDIRECT_URL=${OAUTH2_PROXY_REDIRECT_URL}
+    ports:
+      - "4180:4180"
+    networks:
+      - oauth2proxy
+      - nginx
+      - metabase
+
+networks:
+  oauth2proxy:
+    name: oauth2proxy
+    driver: bridge
+  nginx:
+    external: true
+  metabase:
+    external: true

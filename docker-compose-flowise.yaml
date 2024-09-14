@@ -1,0 +1,55 @@
+name: flowise
+services:
+  flowise:
+    image: flowiseai/flowise:2.0.7
+    container_name: flowise
+    restart: always
+    environment:
+      - PORT=${INTERNAL_PORT}
+      - DATABASE_PATH=${DATABASE_PATH}
+      - APIKEY_PATH=${APIKEY_PATH}
+      - SECRETKEY_PATH=${SECRETKEY_PATH}
+      - LOG_PATH=${LOG_PATH}
+      - BLOB_STORAGE_PATH=${BLOB_STORAGE_PATH}
+      - DEBUG=${DEBUG}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - DISABLE_FLOWISE_TELEMETRY=${DISABLE_FLOWISE_TELEMETRY}
+      - TOOL_FUNCTION_EXTERNAL_DEP=${TOOL_FUNCTION_EXTERNAL_DEP}
+     # Database configuration
+      - DATABASE_TYPE=${DATABASE_TYPE}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_SSL=${DATABASE_SSL}
+      - PGSSLMODE=${PGSSLMODE}
+    #ports:
+    #  - '${EXTERNAL_PORT}:${INTERNAL_PORT}'
+    volumes:
+      - ./data/flowise/volumes/data:/root/.flowise
+      - ./import:/import
+      # The following line allows for local development of the aaiden module
+      - ../aaiden-flowise/custom_tools/aaiden:/usr/local/lib/node_modules/flowise/node_modules/flowise-components/node_modules/aaiden
+    entrypoint: /bin/sh -c "sleep 3; flowise start"
+    networks:
+      - flowise
+      - giles
+      - langfuse
+      - mongodb
+      - postgres
+
+
+networks:
+  flowise:
+    name: flowise
+    driver: bridge
+  giles:
+    external: true
+  langfuse:
+    external: true
+  mongodb:
+    external: true
+  postgres:
+    external: true
+

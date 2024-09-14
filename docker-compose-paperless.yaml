@@ -1,0 +1,61 @@
+name: paperless
+services:
+  broker:
+    container_name: paperless-broker
+    image: docker.io/library/redis:7
+    restart: unless-stopped
+    volumes:
+      - ./data/paperless/broker/volumes/data:/data
+    networks:
+      - paperless
+
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-webserver
+    restart: unless-stopped
+    depends_on:
+      - broker
+    #ports:
+    #  - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./data/paperless/webserver/volumes/data:/usr/src/paperless/data
+      - ./data/paperless/webserver/volumes/media:/usr/src/paperless/media
+      - ./data/paperless/webserver/volumes/export:/usr/src/paperless/export
+      - ./data/paperless/webserver/volumes/import:/usr/src/paperless/import
+      - ./data/paperless/webserver/volumes/consume:/usr/src/paperless/consume
+    environment:
+      PAPERLESS_REDIS: ${PAPERLESS_REDIS}
+      PAPERLESS_DBHOST: ${PAPERLESS_DBHOST}
+      PAPERLESS_DBNAME: ${PAPERLESS_DBNAME}
+      PAPERLESS_DBUSER: ${PAPERLESS_DBUSER}
+      PAPERLESS_DBPASS: ${PAPERLESS_DBPASS}
+      PAPERLESS_DBPORT: ${PAPERLESS_DBPORT}
+      PAPERLESS_ALLOWED_HOSTS: ${PAPERLESS_ALLOWED_HOSTS}
+      PAPERLESS_CORS_ALLOWED_HOSTS: ${PAPERLESS_CORS_ALLOWED_HOSTS}
+      PAPERLESS_CSRF_TRUSTED_ORIGINS: ${PAPERLESS_CSRF_TRUSTED_ORIGINS}
+      PAPERLESS_ENABLE_HTTP_REMOTE_USER: ${PAPERLESS_ENABLE_HTTP_REMOTE_USER}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
+      PAPERLESS_TIME_ZONE: ${PAPERLESS_TIME_ZONE}
+      PAPERLESS_OCR_LANGUAGE: ${PAPERLESS_OCR_LANGUAGE}
+      PAPERLESS_TASK_WORKERS: ${PAPERLESS_TASK_WORKERS}
+      PAPERLESS_WEBSERVER_WORKERS: ${PAPERLESS_WEBSERVER_WORKERS}
+      PAPERLESS_ADMIN_USER: ${PAPERLESS_ADMIN_USER}
+      PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD}
+      PAPERLESS_DATE_ORDER: ${PAPERLESS_DATE_ORDER}
+      PAPERLESS_DEBUG: ${PAPERLESS_DEBUG}
+    networks:
+      - paperless
+      - postgres
+
+networks:
+  paperless:
+    name: paperless
+    driver: bridge
+  postgres:
+    external: true

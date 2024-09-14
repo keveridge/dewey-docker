@@ -1,0 +1,27 @@
+name: duplicati
+services:
+  duplicati:
+    image: linuxserver/duplicati:latest
+    container_name: duplicatici
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - ./data/duplicati/volumes/config:/config
+      - ./data/duplicati/volumes/backups:/backups
+      - ./data/docker/volumes/export:/source/docker_env:ro
+      - ./data/mongodb/volumes/export:/source/mongodb:ro
+      - ./data/paperless/webserver/volumes/export:/source/paperless:ro
+      - ./data/pihole/volumes/export:/source/pihole:ro
+      - ./data/postgres/volumes/export:/source/postgres:ro
+    #ports:
+      # - 8200:8200
+    restart: unless-stopped
+    networks:
+      - duplicati
+
+networks:
+  duplicati:
+    name: duplicati
+    driver: bridge

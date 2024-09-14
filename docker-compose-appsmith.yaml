@@ -1,0 +1,20 @@
+name: appsmith
+services:
+  appsmith:
+    image: index.docker.io/appsmith/appsmith-ce
+    container_name: appsmith
+    #ports:
+    #  - "80:80"
+    volumes:
+      - ./data/appsmith/volumes/data:/appsmith-stacks
+    restart: unless-stopped
+    networks:
+      - appsmith
+      - mongodb
+
+networks:
+  appsmith:
+      name: appsmith
+      driver: bridge
+  mongodb:
+      external: true
